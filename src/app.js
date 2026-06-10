@@ -10,7 +10,14 @@ import connectDB from './config/db.js';
 const app = express();
 
 // Allow all origins for now.
-app.use(cors());
+// app.use(cors( {
+//   origin: '*',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true,
+//   allowedOrigins: ["*"],
+// }
+// ));
 app.use(express.json());
 
 // health check
