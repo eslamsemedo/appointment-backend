@@ -13,6 +13,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// health check
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Server is running' });
+});
+
 // Routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tenants', tenantRouter);
