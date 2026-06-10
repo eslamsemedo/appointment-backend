@@ -1,0 +1,346 @@
+{
+  "info": {
+    "name": "Appointment Backend API",
+    "_postman_id": "appointment-backend-api",
+    "description": "Multi-tenant appointment management API. Set the `baseUrl`, `jwtToken`, and `apiKey` collection variables before running.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",  "value": "http://localhost:3001/api/v1", "type": "string" },
+    { "key": "jwtToken", "value": "",                             "type": "string" },
+    { "key": "apiKey",   "value": "",                             "type": "string" },
+    { "key": "appointmentTypeId", "value": "", "type": "string" },
+    { "key": "bookingId",         "value": "", "type": "string" },
+    { "key": "blockId",           "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data && res.data.token) {",
+                  "  pm.collectionVariables.set('jwtToken', res.data.token);",
+                  "  console.log('JWT saved to collection variable jwtToken');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"yourpassword\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/tenants/me", "host": ["{{baseUrl}}"], "path": ["tenants", "me"] }
+          }
+        },
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"My Business\",\n  \"workingDays\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\"],\n  \"workingHours\": {\n    \"start\": \"09:00\",\n    \"end\": \"18:00\"\n  }\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/tenants/me", "host": ["{{baseUrl}}"], "path": ["tenants", "me"] }
+          }
+        },
+        {
+          "name": "Add Blocked Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data && res.data.blockedTimes) {",
+                  "  const times = res.data.blockedTimes;",
+                  "  if (times.length > 0) {",
+                  "    pm.collectionVariables.set('blockId', times[times.length - 1]._id);",
+                  "    console.log('blockId saved:', times[times.length - 1]._id);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2025-12-25\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/tenants/me/blocked-times", "host": ["{{baseUrl}}"], "path": ["tenants", "me", "blocked-times"] }
+          }
+        },
+        {
+          "name": "Add Blocked Time (with hours)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2025-12-31\",\n  \"startTime\": \"12:00\",\n  \"endTime\": \"14:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/tenants/me/blocked-times", "host": ["{{baseUrl}}"], "path": ["tenants", "me", "blocked-times"] }
+          }
+        },
+        {
+          "name": "Remove Blocked Time",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/tenants/me/blocked-times/{{blockId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tenants", "me", "blocked-times", "{{blockId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointment Types",
+      "item": [
+        {
+          "name": "List Appointment Types",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": { "raw": "{{baseUrl}}/appointment-types", "host": ["{{baseUrl}}"], "path": ["appointment-types"] }
+          }
+        },
+        {
+          "name": "Create Appointment Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data && res.data._id) {",
+                  "  pm.collectionVariables.set('appointmentTypeId', res.data._id);",
+                  "  console.log('appointmentTypeId saved:', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consultation\",\n  \"durationMinutes\": 60,\n  \"capacity\": 1,\n  \"price\": 100\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/appointment-types", "host": ["{{baseUrl}}"], "path": ["appointment-types"] }
+          }
+        },
+        {
+          "name": "Update Appointment Type",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwtToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Consultation (Updated)\",\n  \"durationMinutes\": 60,\n  \"capacity\": 2,\n  \"price\": 120\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/appointment-types/{{appointmentTypeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["appointment-types", "{{appointmentTypeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Appointment Type",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/appointment-types/{{appointmentTypeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["appointment-types", "{{appointmentTypeId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Availability",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "x-api-key", "value": "{{apiKey}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/appointment-types/{{appointmentTypeId}}/availability?date=2025-12-01",
+              "host": ["{{baseUrl}}"],
+              "path": ["appointment-types", "{{appointmentTypeId}}", "availability"],
+              "query": [{ "key": "date", "value": "2025-12-01" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking (API Key)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success && res.data && res.data._id) {",
+                  "  pm.collectionVariables.set('bookingId', res.data._id);",
+                  "  console.log('bookingId saved:', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "x-api-key", "value": "{{apiKey}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentTypeId\": \"{{appointmentTypeId}}\",\n  \"date\": \"2025-12-01\",\n  \"time\": \"09:00\",\n  \"customerName\": \"Jane Doe\",\n  \"customerEmail\": \"jane@example.com\",\n  \"notes\": \"First visit\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/bookings", "host": ["{{baseUrl}}"], "path": ["bookings"] }
+          }
+        },
+        {
+          "name": "List Bookings (JWT)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          }
+        },
+        {
+          "name": "List Bookings — filter by date",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings?date=2025-12-01",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [{ "key": "date", "value": "2025-12-01" }]
+            }
+          }
+        },
+        {
+          "name": "List Bookings — filter by status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings?status=pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [{ "key": "status", "value": "pending" }]
+            }
+          }
+        },
+        {
+          "name": "Get Booking by ID (JWT)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "Confirm Booking (JWT)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/confirm",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "confirm"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking (JWT)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "cancel"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking (API Key)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "x-api-key", "value": "{{apiKey}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "cancel"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
