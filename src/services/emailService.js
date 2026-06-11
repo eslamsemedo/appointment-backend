@@ -1,59 +1,47 @@
-import nodemailer from 'nodemailer';
-import Tenant from '../models/Tenant.js';
-import { decrypt } from '../utils/crypto.js';
+import { Resend } from 'resend';
 import env from '../config/env.js';
 
 // ---------------------------------------------------------------------------
-// Per-tenant sender resolution
+// Email delivery via Resend (HTTPS API)
 // ---------------------------------------------------------------------------
-// Each tenant brings their own mailbox (senderEmail + encrypted
-// senderAppPassword). The shared GMAIL_* env account is only a legacy fallback
-// for tenants that never configured a sender.
+// Railway (and most cloud hosts) block/throttle outbound SMTP, so the old
+// per-tenant nodemailer+Gmail path timed out in production ("Connection
+// timeout"). We now send through Resend's HTTPS API on port 443, which is not
+// blocked.
 //
-// req.tenant is loaded without select:false fields, so senderAppPassword is
-// usually absent — we re-fetch it explicitly here.
+// All tenants share a single Resend account: mail is sent FROM a verified
+// address (EMAIL_FROM) with the tenant's business name as the display name,
+// and the tenant's own address as Reply-To so customer replies reach them.
 
-const buildGmailTransport = (user, pass) =>
-  nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: { user, pass },
-  });
+let resendClient = null;
+const getResend = () => {
+  if (!env.RESEND_API_KEY) return null;
+  if (!resendClient) resendClient = new Resend(env.RESEND_API_KEY);
+  return resendClient;
+};
 
-// Returns { transporter, from } or null when no sender is configured at all.
-const resolveSender = async (tenant) => {
-  // Pull the encrypted password (select:false) if it wasn't already loaded.
-  let senderEmail = tenant.senderEmail;
-  let senderName = tenant.senderName;
-  let encrypted = tenant.senderAppPassword;
+// EMAIL_FROM may be a bare address or "Name <addr>" — extract the address so we
+// can re-wrap it with the tenant's display name.
+const extractAddress = (value = '') => {
+  const match = value.match(/<([^>]+)>/);
+  return (match ? match[1] : value).trim();
+};
 
-  if (senderEmail && encrypted === undefined) {
-    const withSecret = await Tenant.findById(tenant._id).select(
-      '+senderAppPassword senderEmail senderName name'
-    );
-    senderEmail = withSecret?.senderEmail;
-    senderName = withSecret?.senderName;
-    encrypted = withSecret?.senderAppPassword;
-  }
+// Returns { client, from, replyTo } or null when Resend is not configured.
+const resolveSender = (tenant) => {
+  const client = getResend();
+  if (!client || !env.EMAIL_FROM) return null;
 
-  if (senderEmail && encrypted) {
-    const displayName = senderName || tenant.name || senderEmail;
-    return {
-      transporter: buildGmailTransport(senderEmail, decrypt(encrypted)),
-      from: `"${displayName}" <${senderEmail}>`,
-    };
-  }
+  const fromAddress = extractAddress(env.EMAIL_FROM);
+  const displayName = tenant.senderName || tenant.name || 'Appointly';
+  // Reply-To routes customer replies to the tenant's real inbox.
+  const replyTo = tenant.senderEmail || tenant.email || undefined;
 
-  // Legacy fallback: shared env account (if configured).
-  if (env.GMAIL_USER && env.GMAIL_APP_PASSWORD) {
-    return {
-      transporter: buildGmailTransport(env.GMAIL_USER, env.GMAIL_APP_PASSWORD),
-      from: env.EMAIL_FROM || env.GMAIL_USER,
-    };
-  }
-
-  return null;
+  return {
+    client,
+    from: `${displayName} <${fromAddress}>`,
+    replyTo,
+  };
 };
 
 // ---------------------------------------------------------------------------
@@ -168,21 +156,38 @@ export const sendConfirmationEmail = async (tenant, booking, appointmentTypeName
     closing: 'We look forward to seeing you. If anything changes, just reply to this email.',
   };
 
+  const sender = resolveSender(tenant);
+  if (!sender) {
+    console.warn(
+      `[email] Resend not configured (RESEND_API_KEY/EMAIL_FROM) — skipping confirmation email for tenant ${tenant._id}.`
+    );
+    return;
+  }
+
   try {
-    const sender = await resolveSender(tenant);
-    if (!sender) {
-      console.warn(`No email sender configured for tenant ${tenant._id} — skipping confirmation email.`);
-      return;
-    }
-    await sender.transporter.sendMail({
+    const { data, error } = await sender.client.emails.send({
       from: sender.from,
       to: booking.customer.email,
+      replyTo: sender.replyTo,
       subject: `Your appointment is confirmed — ${businessName}`,
       text: renderText(content),
       html: renderEmail(content),
     });
+    if (error) {
+      console.error(
+        `[email] Confirmation send rejected for ${booking.customer.email}:`,
+        error
+      );
+      return;
+    }
+    console.log(
+      `[email] Confirmation sent to ${booking.customer.email} (id: ${data?.id})`
+    );
   } catch (err) {
-    console.error('Failed to send confirmation email:', err.message);
+    console.error(
+      `[email] Failed to send confirmation email to ${booking.customer.email}:`,
+      err
+    );
   }
 };
 
@@ -206,21 +211,38 @@ export const sendCancellationEmail = async (tenant, booking, appointmentTypeName
     closing: 'If this was a mistake or you would like to rebook, simply reply to this email.',
   };
 
+  const sender = resolveSender(tenant);
+  if (!sender) {
+    console.warn(
+      `[email] Resend not configured (RESEND_API_KEY/EMAIL_FROM) — skipping cancellation email for tenant ${tenant._id}.`
+    );
+    return;
+  }
+
   try {
-    const sender = await resolveSender(tenant);
-    if (!sender) {
-      console.warn(`No email sender configured for tenant ${tenant._id} — skipping cancellation email.`);
-      return;
-    }
-    await sender.transporter.sendMail({
+    const { data, error } = await sender.client.emails.send({
       from: sender.from,
       to: booking.customer.email,
+      replyTo: sender.replyTo,
       subject: `Your appointment was cancelled — ${businessName}`,
       text: renderText(content),
       html: renderEmail(content),
     });
+    if (error) {
+      console.error(
+        `[email] Cancellation send rejected for ${booking.customer.email}:`,
+        error
+      );
+      return;
+    }
+    console.log(
+      `[email] Cancellation sent to ${booking.customer.email} (id: ${data?.id})`
+    );
   } catch (err) {
-    console.error('Failed to send cancellation email:', err.message);
+    console.error(
+      `[email] Failed to send cancellation email to ${booking.customer.email}:`,
+      err
+    );
   }
 };
 
@@ -228,14 +250,12 @@ export const sendCancellationEmail = async (tenant, booking, appointmentTypeName
 // Unlike the fire-and-forget senders above, this throws on failure so the
 // caller (test endpoint) can report the real SMTP error to the tenant.
 export const sendTestEmail = async (tenant) => {
-  const sender = await resolveSender(tenant);
+  const sender = resolveSender(tenant);
   if (!sender) {
     const err = new Error('No email sender configured');
     err.code = 'EMAIL_NOT_CONFIGURED';
     throw err;
   }
-
-  await sender.transporter.verify(); // validates host/auth before sending
 
   const businessName = tenant.senderName || tenant.name || 'Appointly';
   const content = {
@@ -255,11 +275,16 @@ export const sendTestEmail = async (tenant) => {
     closing: 'You can safely ignore this email — no action is needed.',
   };
 
-  await sender.transporter.sendMail({
+  const { error } = await sender.client.emails.send({
     from: sender.from,
     to: tenant.email,
+    replyTo: sender.replyTo,
     subject: `Test email — ${businessName}`,
     text: renderText(content),
     html: renderEmail(content),
   });
+  if (error) {
+    // Surface the real Resend error to the caller (test endpoint).
+    throw new Error(error.message || 'Resend rejected the message');
+  }
 };

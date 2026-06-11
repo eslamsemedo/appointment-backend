@@ -21,6 +21,7 @@
     "mongoose": "^8.5.0",
     "nanoid": "^5.0.7",
     "nodemailer": "^6.9.14",
+    "resend": "^6.12.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
