@@ -5,6 +5,7 @@ import { updateTenantSchema, blockedTimeSchema } from '../schemas/tenant.schema.
 import {
   getMe,
   updateMe,
+  testEmail,
   addBlockedTime,
   removeBlockedTime,
 } from '../controllers/tenantController.js';
@@ -16,6 +17,7 @@ router.use(jwtAuth);
 
 router.get('/me', getMe);
 router.put('/me', validate(updateTenantSchema), updateMe);
+router.post('/me/email/test', testEmail);
 router.post('/me/blocked-times', validate(blockedTimeSchema), addBlockedTime);
 router.delete('/me/blocked-times/:blockId', removeBlockedTime);
 

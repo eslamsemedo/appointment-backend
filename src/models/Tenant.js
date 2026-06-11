@@ -19,6 +19,16 @@ const tenantSchema = new mongoose.Schema(
     // NEVER returned in API responses. Only the login controller uses .select('+passwordHash').
     passwordHash: { type: String, required: true, select: false },
     apiKey: { type: String, required: true, unique: true },
+
+    // Per-tenant outbound email ("bring your own sender"). Each tenant sends
+    // confirmation/cancellation emails from their own mailbox instead of a
+    // single shared env account.
+    senderEmail: { type: String, lowercase: true, trim: true }, // e.g. a Gmail address
+    // Display name on the "From" line; falls back to the business name.
+    senderName: { type: String, trim: true },
+    // The mailbox app password, AES-encrypted at rest (see utils/crypto.js).
+    // NEVER returned in API responses; only emailService selects it explicitly.
+    senderAppPassword: { type: String, select: false },
     workingDays: {
       type: [String],
       enum: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],

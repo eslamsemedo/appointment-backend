@@ -17,10 +17,17 @@ const getTypeName = async (tenantId, appointmentTypeId) => {
   return type ? type.name : '';
 };
 
-// POST /api/v1/bookings — API key (public)
+// POST /api/v1/bookings — API key (widget) OR JWT (dashboard admin)
 export const createBooking = async (req, res, next) => {
   try {
     const { appointmentTypeId, date, time, customer, note } = req.body;
+
+    // Only the dashboard admin (JWT) may create an already-confirmed booking.
+    // Widget requests are always pending — the tenant confirms them first.
+    const status =
+      req.authType === 'jwt' && req.body.status === 'confirmed'
+        ? 'confirmed'
+        : 'pending';
 
     // Ownership enforced at the query level.
     const appointmentType = await AppointmentType.findOne({
@@ -60,10 +67,16 @@ export const createBooking = async (req, res, next) => {
       time,
       customer,
       note,
-      status: 'pending',
+      status,
     });
 
-    // No email on creation — the tenant confirms first.
+    // Widget bookings stay pending and send no email — the tenant confirms
+    // first. An admin manually adding a confirmed booking notifies the
+    // customer immediately, mirroring the confirm endpoint.
+    if (status === 'confirmed') {
+      await sendConfirmationEmail(req.tenant, booking, appointmentType.name);
+    }
+
     return res.status(201).json({ success: true, data: booking });
   } catch (err) {
     next(err);
@@ -126,7 +139,7 @@ export const confirmBooking = async (req, res, next) => {
     await booking.save();
 
     const typeName = await getTypeName(req.tenant._id, booking.appointmentTypeId);
-    await sendConfirmationEmail(booking, typeName);
+    await sendConfirmationEmail(req.tenant, booking, typeName);
 
     return res.status(200).json({ success: true, data: booking });
   } catch (err) {
@@ -156,7 +169,7 @@ export const cancelBooking = async (req, res, next) => {
     await booking.save();
 
     const typeName = await getTypeName(req.tenant._id, booking.appointmentTypeId);
-    await sendCancellationEmail(booking, typeName);
+    await sendCancellationEmail(req.tenant, booking, typeName);
 
     return res.status(200).json({ success: true, data: booking });
   } catch (err) {

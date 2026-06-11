@@ -8,9 +8,12 @@ const envSchema = z.object({
   MONGO_DB_NAME: z.string().min(1, 'MONGO_DB_NAME is required'),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   PORT: z.string().default('3001'),
-  GMAIL_USER: z.string().min(1, 'GMAIL_USER is required'),
-  GMAIL_APP_PASSWORD: z.string().min(1, 'GMAIL_APP_PASSWORD is required'),
-  EMAIL_FROM: z.string().min(1, 'EMAIL_FROM is required'),
+  // Legacy/optional shared sender — kept only as a fallback for tenants that
+  // have not configured their own sender. Per-tenant credentials (stored on
+  // the Tenant document) take precedence. See services/emailService.js.
+  GMAIL_USER: z.string().optional(),
+  GMAIL_APP_PASSWORD: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

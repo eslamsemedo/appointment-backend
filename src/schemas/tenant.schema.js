@@ -6,6 +6,7 @@ const DAY_ENUM = z.enum(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
 
 // PUT /tenants/me — all fields optional.
 export const updateTenantSchema = z.object({
+  name: z.string().min(1, 'name cannot be empty').max(120).optional(),
   workingDays: z.array(DAY_ENUM).optional(),
   workingHours: z
     .object({
@@ -13,6 +14,11 @@ export const updateTenantSchema = z.object({
       end: z.string().regex(TIME_REGEX, 'end must be in HH:MM format'),
     })
     .optional(),
+  // Per-tenant email sender. senderEmail/senderAppPassword may be sent as ''
+  // to clear them; otherwise senderEmail must be a valid address.
+  senderEmail: z.union([z.literal(''), z.string().email('senderEmail must be a valid email')]).optional(),
+  senderName: z.string().max(120).optional(),
+  senderAppPassword: z.string().max(200).optional(),
 });
 
 // POST /tenants/me/blocked-times

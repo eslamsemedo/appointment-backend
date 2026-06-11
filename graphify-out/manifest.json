@@ -1,0 +1,172 @@
+{
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/.claude/settings.local.json": {
+    "mtime": 1781087824.322568,
+    "ast_hash": "c2ad66136bfdf4a5fc976560d60ce0b0",
+    "semantic_hash": "c2ad66136bfdf4a5fc976560d60ce0b0"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/package.json": {
+    "mtime": 1781096191.5729942,
+    "ast_hash": "44ac880abc578aa38bb5397355542c35",
+    "semantic_hash": "44ac880abc578aa38bb5397355542c35"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/postman_collection.json": {
+    "mtime": 1781089873.0495086,
+    "ast_hash": "dde3a527f4e244138e8912ccdd2c49b2",
+    "semantic_hash": "dde3a527f4e244138e8912ccdd2c49b2"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/scripts/createTenant.js": {
+    "mtime": 1781089357.1220481,
+    "ast_hash": "1c02b37d6d97204b9159abd005e1bb95",
+    "semantic_hash": "1c02b37d6d97204b9159abd005e1bb95"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/scripts/verify-build.js": {
+    "mtime": 1781096190.47518,
+    "ast_hash": "385a32a58a635e72621dd05bf2533cc5",
+    "semantic_hash": "385a32a58a635e72621dd05bf2533cc5"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/server.js": {
+    "mtime": 1781098601.221826,
+    "ast_hash": "db6bb804559797d2bfb15a6797e64a50",
+    "semantic_hash": "db6bb804559797d2bfb15a6797e64a50"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/app.js": {
+    "mtime": 1781178327.9324362,
+    "ast_hash": "673a92d5779e038f99a7a2e7a263c0d9",
+    "semantic_hash": "673a92d5779e038f99a7a2e7a263c0d9"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/config/db.js": {
+    "mtime": 1781095382.6079977,
+    "ast_hash": "1ce1c8f0df4c7584dbea0f1a06bba0ca",
+    "semantic_hash": "1ce1c8f0df4c7584dbea0f1a06bba0ca"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/config/env.js": {
+    "mtime": 1781089102.7625768,
+    "ast_hash": "4ca75c83da8f047af37ae3afa9e2a3c5",
+    "semantic_hash": "4ca75c83da8f047af37ae3afa9e2a3c5"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/controllers/appointmentTypeController.js": {
+    "mtime": 1781088391.8946023,
+    "ast_hash": "77ebe449bdb05aef6840a26db7370653",
+    "semantic_hash": "77ebe449bdb05aef6840a26db7370653"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/controllers/authController.js": {
+    "mtime": 1781088369.364338,
+    "ast_hash": "9a731d41ccee8f52e38a14509dc5eded",
+    "semantic_hash": "9a731d41ccee8f52e38a14509dc5eded"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/controllers/bookingController.js": {
+    "mtime": 1781088411.1891358,
+    "ast_hash": "795c6620a88fc86a2df44003452eb7ec",
+    "semantic_hash": "795c6620a88fc86a2df44003452eb7ec"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/controllers/tenantController.js": {
+    "mtime": 1781088785.9280827,
+    "ast_hash": "c855cba41d322d71180bc79bcc34b535",
+    "semantic_hash": "c855cba41d322d71180bc79bcc34b535"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/middleware/apiKeyAuth.js": {
+    "mtime": 1781088308.7269363,
+    "ast_hash": "a30ca40291251b61bed9f723747338aa",
+    "semantic_hash": "a30ca40291251b61bed9f723747338aa"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/middleware/errorHandler.js": {
+    "mtime": 1781088314.6544466,
+    "ast_hash": "0965c0c3350ecf158e9de51176c25d58",
+    "semantic_hash": "0965c0c3350ecf158e9de51176c25d58"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/middleware/jwtAuth.js": {
+    "mtime": 1781088312.9680662,
+    "ast_hash": "56ef6db532a5469a91493fda4e985144",
+    "semantic_hash": "56ef6db532a5469a91493fda4e985144"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/middleware/validate.js": {
+    "mtime": 1781088305.46504,
+    "ast_hash": "64e35e041cee9642531bbce2e26ad6e8",
+    "semantic_hash": "64e35e041cee9642531bbce2e26ad6e8"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/models/AppointmentType.js": {
+    "mtime": 1781088295.609825,
+    "ast_hash": "139c6930bf39e8a189523871a234aa20",
+    "semantic_hash": "139c6930bf39e8a189523871a234aa20"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/models/Booking.js": {
+    "mtime": 1781088299.137598,
+    "ast_hash": "40d1dc72c6250c3f9a9fed319fb7d227",
+    "semantic_hash": "40d1dc72c6250c3f9a9fed319fb7d227"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/models/Tenant.js": {
+    "mtime": 1781088293.2573946,
+    "ast_hash": "7a43a5e9cfbf003ed1c7baf1615a6d1b",
+    "semantic_hash": "7a43a5e9cfbf003ed1c7baf1615a6d1b"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/routes/appointmentTypes.js": {
+    "mtime": 1781088422.815218,
+    "ast_hash": "774a339421ae09f70af009abe6959bcb",
+    "semantic_hash": "774a339421ae09f70af009abe6959bcb"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/routes/auth.js": {
+    "mtime": 1781088415.1339889,
+    "ast_hash": "d04e13ffe5308e16e5ce63a8e27d8875",
+    "semantic_hash": "d04e13ffe5308e16e5ce63a8e27d8875"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/routes/bookings.js": {
+    "mtime": 1781088427.8134005,
+    "ast_hash": "57deedfc0d34d681ef51716c7ca28c80",
+    "semantic_hash": "57deedfc0d34d681ef51716c7ca28c80"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/routes/tenants.js": {
+    "mtime": 1781088418.4211807,
+    "ast_hash": "40fde6f14a3228aae52916b9f696b1e9",
+    "semantic_hash": "40fde6f14a3228aae52916b9f696b1e9"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/schemas/appointmentType.schema.js": {
+    "mtime": 1781088330.4932973,
+    "ast_hash": "160f0b1501c599a4520ffeee240a8a03",
+    "semantic_hash": "160f0b1501c599a4520ffeee240a8a03"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/schemas/auth.schema.js": {
+    "mtime": 1781088321.2312195,
+    "ast_hash": "59aa09c253b879ad7b7888f86d317fb4",
+    "semantic_hash": "59aa09c253b879ad7b7888f86d317fb4"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/schemas/booking.schema.js": {
+    "mtime": 1781088335.0164127,
+    "ast_hash": "76b4bf1a46417eb59607752ab2eea971",
+    "semantic_hash": "76b4bf1a46417eb59607752ab2eea971"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/schemas/tenant.schema.js": {
+    "mtime": 1781088326.2579656,
+    "ast_hash": "04476d09bf1fb2074b5d078328d0a307",
+    "semantic_hash": "04476d09bf1fb2074b5d078328d0a307"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/services/availabilityService.js": {
+    "mtime": 1781088361.8844607,
+    "ast_hash": "c2533c7073a9e222b66c2c8e4a3e330d",
+    "semantic_hash": "c2533c7073a9e222b66c2c8e4a3e330d"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/src/services/emailService.js": {
+    "mtime": 1781088343.0069008,
+    "ast_hash": "7e12007dfcf5c180e4c8b386b8a7b407",
+    "semantic_hash": "7e12007dfcf5c180e4c8b386b8a7b407"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/INTEGRATION.md": {
+    "mtime": 1781178554.07524,
+    "ast_hash": "32ed938974a5a6f2cf94f5061662a476",
+    "semantic_hash": "32ed938974a5a6f2cf94f5061662a476"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/md/API.md": {
+    "mtime": 1781098749.5835423,
+    "ast_hash": "1783c42adbca5027f94835e7dff047b0",
+    "semantic_hash": "1783c42adbca5027f94835e7dff047b0"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/md/BOOKING_WIDGET.md": {
+    "mtime": 1781113145.8369741,
+    "ast_hash": "51cc09003ff5beb9831b030fbe1ddbc6",
+    "semantic_hash": "51cc09003ff5beb9831b030fbe1ddbc6"
+  },
+  "/Users/eslamsemedo/Downloads/EslamGit/appointment/appointment-backend/md/backend-spec.md": {
+    "mtime": 1781095230.3985445,
+    "ast_hash": "67dd100ae91db07aba4d61b03f09fb8b",
+    "semantic_hash": "67dd100ae91db07aba4d61b03f09fb8b"
+  }
+}

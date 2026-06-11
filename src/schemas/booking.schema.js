@@ -14,6 +14,9 @@ export const createBookingSchema = z.object({
     phone: z.string().min(1, 'customer.phone is required'),
   }),
   note: z.string().optional(),
+  // Admins (JWT) may create a booking that is already confirmed. The widget
+  // path (API key) is forced back to 'pending' in the controller regardless.
+  status: z.enum(['pending', 'confirmed']).optional(),
 });
 
 // GET /bookings — all query params optional.
